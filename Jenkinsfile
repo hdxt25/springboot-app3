@@ -3,12 +3,12 @@ pipeline {
     agent { 
         docker {
             image 'hdxt25/maven-docker-agent:v1'
-            args '--user root -v /var/run/docker.sock:/var/run/docker.sock  -v /Users/himanshu/.jenkins/workspace:/workspace -w /workspace'
+            args '--user root -v /var/run/docker.sock:/var/run/docker.sock  -v /var/lib/jenkins/workspace:/workspace -w /workspace'
         }
     }
     environment {
         SONAR_URL = "http://3.134.76.152:9000"
-        DOCKER_IMAGE = "hdxt25/web-app-1"
+        DOCKER_IMAGE = "hdxt25/springboot-app3"
     }
 
     stages {
@@ -107,7 +107,7 @@ pipeline {
         
         stage('Update Deployment File') {
             environment {
-                GIT_REPO_NAME = "web-app-1"
+                GIT_REPO_NAME = "springboot-app3"
                     
             }
             steps {    
@@ -122,7 +122,7 @@ pipeline {
                             git config --global --add safe.directory $WORKSPACE
 
                             # Update deployment manifest with Jenkins BUILD_NUMBER
-                            sed -i "s/replaceImageTag/$GIT_COMMIT/g" web-app-manifests/deployment.yml
+                            sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
 
                             # Stage and commit changes
                             git add web-app-manifests/deployment.yml

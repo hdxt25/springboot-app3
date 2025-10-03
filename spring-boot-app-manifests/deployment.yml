@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-boot-app
+  name: springboot-app3
   labels:
-    app: spring-boot-app
+    app: springboot-app3
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: spring-boot-app
+      app: springboot-app3
   template:
     metadata:
       labels:
-        app: spring-boot-app
+        app: springboot-app3
     spec:
       containers:
-      - name: spring-boot-app
-        image: hdxt25/ultimate-cicd:27
+      - name: springboot-app3
+        image: hdxt25/springboot-app3:replaceImageTag
         ports:
         - containerPort: 8080
