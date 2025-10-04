@@ -81,7 +81,7 @@ pipeline {
                     git config --global --add safe.directory $WORKSPACE
 
                     # Update deployment manifest with Jenkins BUILD_NUMBER
-                    sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
+                    sed -i.bak "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
 
                     # Stage and commit changes
                     git add spring-boot-app-manifests/deployment.yml
