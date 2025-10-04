@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image "hdxt25/maven-docker-agent:v1" 
-      args "--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:/workspace --workdir /workspace" // mount Docker socket to access the host's Docker daemon
+      args "--user root -v /var/run/docker.sock:/var/run/docker.sock"  // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
@@ -12,23 +12,21 @@ pipeline {
   stages {
     stage('Checkout Code') {
       steps {
-        dir('/workspace') {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
-        }
       }
     }
     stage('check') {
       steps {
         sh '''
-          echo "Current directory: $(pwd)"
+          echo "Current jenkins directory: $(WORKSPACE)"
           echo "Contents of /workspace:"
-          ls -al /workspace
+          ls -al $(WORKSPACE)
         '''
       }
     }
     stage("Trivy: Filesystem scan") {
       steps {
-        sh ' trivy fs --debug --skip-dirs target,.git /workspace '        
+        sh ' trivy fs ${WORKSPACE} '        
       } 
     }
     stage('Build and Test') {
