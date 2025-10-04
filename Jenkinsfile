@@ -36,7 +36,8 @@ pipeline {
     }
     stage('SCA - OWASP Dependency Check') {
       steps {
-        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP'
+        sh 'chmod +x /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh'
+        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: '/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
                                   failedTotalHigh: 10,
                                  unstableTotalHigh: 10,
@@ -109,42 +110,23 @@ pipeline {
     }
     stage('Update Deployment File') {
       environment {
-        GIT_REPO_NAME = "springboot-app3"           
+            GIT_REPO_NAME = "springboot-app3"
+            GIT_USER_NAME = "hdxt25"
       }
-      steps {    
-        script {
-          withCredentials([usernamePassword(credentialsId: 'github-cred', 
-                                          usernameVariable: 'GIT_USER', 
-                                          passwordVariable: 'GIT_PASS')]) {
-                sh '''
-                    # Ensure permissions
-                    chown -R $(id -u):$(id -g) $WORKSPACE
-                    chmod -R u+w $WORKSPACE
-  
-                    # Configure Git identity
+      steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+              sh 
+                '''
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
-
-                    # Copy the deployment file to container temp directory
-                    # cp spring-boot-app-manifests/deployment.yml /tmp/deployment.yml
-
-                    # Replace the image tag inside the temp file
-                    # sed -i "s/replaceImageTag/$GIT_COMMIT/g" /tmp/deployment.yml
-
-                    # Move the edited file back to the original location
-                    # mv /tmp/deployment.yml spring-boot-app-manifests/deployment.yml
-                    # Update deployment manifest with Jenkins BUILD_NUMBER
-                      sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
-
-                    # Stage and commit changes
+                    BUILD_NUMBER=${GIT_COMMIT}
+                    sed -i "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml
                     git add .
-                    git commit -m "Update deployment image to version ${GIT_COMMIT}" || echo "No changes to commit"
-
-                    # Push changes using username/password from Jenkins credentials
-                    git push https://$GIT_USER:$GIT_PASS@github.com/$GIT_USER/$GIT_REPO_NAME.git HEAD:main
-                '''
-          }
+                    git commit -m "Update deployment image to version ${GIT_COMMIT}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+              '''
+          
         }
       }
     }
