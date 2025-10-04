@@ -19,7 +19,7 @@ pipeline {
       steps {
         dir('/workspace') {
          git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
-        
+        }
       }    
     }
     stage('check') {
