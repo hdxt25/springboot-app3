@@ -16,11 +16,7 @@ pipeline {
         sh 'ls -la $WORKSPACE || echo "Workspace empty or inaccessible"'
         
         // Clean workspace
-        cleanWs()
-        checkout scm
         
-        // Optionally list contents after cleanup
-        sh 'ls -la $WORKSPACE || echo "Workspace cleaned"'
       }
     }
     stage('Checkout Code') {
@@ -155,6 +151,7 @@ pipeline {
   post {
     always {
       // No Docker cleanup needed since app isn’t run
+      cleanWs()
       echo "Pipeline finished."
     }
   }
