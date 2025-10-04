@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'hdxt25/maven-docker-agent:v1'  
-      args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${WORKSPACE}:/workspace' // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
