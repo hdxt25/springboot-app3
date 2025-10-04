@@ -12,10 +12,14 @@ pipeline {
   stages {
     stage('Check and Clean Workspace') {
       steps {
-        sh '''
-            ls -la $WORKSPACE || echo "Workspace empty or inaccessible"
-            rm -rf $WORKSPACE && ls -la $WORKSPACE
-        '''
+        // List contents before cleanup
+        sh 'ls -la $WORKSPACE || echo "Workspace empty or inaccessible"'
+        
+        // Clean workspace
+        cleanWs()
+        
+        // Optionally list contents after cleanup
+        sh 'ls -la $WORKSPACE || echo "Workspace cleaned"'
       }
     }
     stage('Checkout Code') {
