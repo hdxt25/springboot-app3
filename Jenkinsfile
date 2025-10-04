@@ -25,14 +25,14 @@ pipeline {
         sh ' trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed ${WORKSPACE} '        
       } 
     }
-    stage('Dependency-Check') {
+    stage('SAST: Dependency-Check') {
       steps {
         /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
         dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
-  /*  stage('Static Code Analysis') {
+  /*  stage('SAST: Static Code Analysis') {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
@@ -52,8 +52,8 @@ pipeline {
     stage('build & push final multiarch docker image') {
       steps {
         withCredentials([usernamePassword(credentialsId:'docker-cred',
-                                                        usernameVariable: DOCKER_USER,
-                                         passwordVariable: DOCKER_PASS)]) {
+                                                        usernameVariable: 'DOCKER_USER',
+                                         passwordVariable: 'DOCKER_PASS')]) {
             sh '''
                             
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
