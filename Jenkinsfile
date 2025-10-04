@@ -20,6 +20,12 @@ pipeline {
         git url: "https://github.com/hdxt25/web-app-1.git", branch: "main", credentialsId: "github-cred"
       }    
     }
+    stage ('check') {
+      steps {
+        sh 'ls -al /workspace || ls -al /home/jenkins/agent'
+
+      }
+    }
     stage("Trivy: Filesystem scan") {
       steps {
         sh ' trivy fs --debug --skip-dirs target,.git /workspace '        
