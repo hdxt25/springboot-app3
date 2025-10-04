@@ -36,19 +36,11 @@ pipeline {
     }
     stage('Dependency-Check') {
       steps {
-        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-            sh """
-              echo "Value: ${NVD_API_KEY}"
-              mvn org.owasp:dependency-check-maven:check -Dnvd.apiKey="${NVD_API_KEY}"
-            """
-        }
+        /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
+        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
-      post {
-        always {
-            archiveArtifacts artifacts: 'target/dependency-check-report.html', fingerprint: true
-        }
-      }
-    }
+    }   
   /*  stage('Dependency-Check') {
       environment {
         NVD_API_KEY = credentials('nvd-api-key')  // Jenkins credentials
