@@ -42,9 +42,7 @@ pipeline {
     stage('Docker Build (Local Only)') {
       steps {
         sh '''
-            docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
-            # Build single arch and load locally for scanning
-            docker buildx build --platform linux/amd64 -t $DOCKER_IMAGE:$GIT_COMMIT --load .   
+            docker build  -t $DOCKER_IMAGE:$GIT_COMMIT .   
 
             # Run Trivy scan on the just-built image
             trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT    
@@ -67,7 +65,7 @@ pipeline {
             sh '''
                             
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                # docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
+                docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
                 # Build and push multi-arch image
                 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $DOCKER_IMAGE:$GIT_COMMIT --push .            
                 docker logout              
