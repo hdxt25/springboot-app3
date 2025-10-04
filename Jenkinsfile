@@ -22,7 +22,7 @@ pipeline {
     }
     stage("Trivy: Filesystem scan") {
       steps {
-        sh ' trivy fs --debug --skip-dirs target,.git . '        
+        sh ' trivy fs --debug --skip-dirs target,.git /workspace '        
       } 
     }
     stage('Build and Test') {
