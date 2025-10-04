@@ -28,7 +28,7 @@ pipeline {
     stage('SAST: OWASP: Dependency-Check') {
       steps {
         /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
-        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP', ignoreFailures: true
+        dependencyCheck ( additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP', ignoreFailures: true )
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
