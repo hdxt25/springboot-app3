@@ -34,32 +34,13 @@ pipeline {
         sh ' trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed ${WORKSPACE} '        
       } 
     }
-    stage('OWASP Dependency Check') {
-      environment {
-        REPORT_DIR = "${WORKSPACE}/dependency-check-report"
-      }
+    stage('SCA - OWASP Dependency Check') {
       steps {
-        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-          sh '''
-              echo "Running OWASP Dependency Check..."
-              docker run --rm \
-              -v $WORKSPACE:/src \
-              owasp/dependency-check:latest \
-              --scan /src \
-              --format XML \
-              --out /src/dependency-check-report \
-              --nvd-api-key $NVD_API_KEY
-          '''
-        }
-      }
-      post {
-        always {
-            echo 'Dependency Check completed.'
-            archiveArtifacts artifacts: 'dependency-check-report/**', fingerprint: true
-        }
-      }
+        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP'
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
+                                  failedTotalAll: 0, unstableTotalAll: 0
+     }
     }
-
    /*
       stage('SAST: SONARQUBE: Static Code Analysis') {
       steps {
