@@ -27,14 +27,14 @@ pipeline {
         sh ' trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed ${WORKSPACE} '        
       } 
     }
-    stage('SAST: Dependency-Check') {
+    stage('SAST: OWASP: Dependency-Check') {
       steps {
         /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
-        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
+        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
-  /*  stage('SAST: Static Code Analysis') {
+  /*  stage('SAST: SONARQUBE: Static Code Analysis') {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
@@ -52,7 +52,7 @@ pipeline {
             '''
       }
     }
-    stage('DAST - OWASP ZAP') {
+    stage('DAST:  OWASP ZAP') {
       steps {
         sh '''
           # Run your app inside Docker container
@@ -123,7 +123,7 @@ pipeline {
                     #  sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
 
                     # Stage and commit changes
-                    git add spring-boot-app-manifests/deployment.yml
+                    git add .
                     git commit -m "Update deployment image to version ${GIT_COMMIT}" || echo "No changes to commit"
 
                     # Push changes using username/password from Jenkins credentials
