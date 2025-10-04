@@ -10,4 +10,4 @@ WORKDIR /opt/app
 
 COPY ${artifact} app.jar
 
-CMD ["app.jar"]
+CMD ["java", "-jar", "app.jar"]
