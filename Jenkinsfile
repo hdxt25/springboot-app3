@@ -1,8 +1,8 @@
 pipeline {
   agent {
     docker {
-      image 'hdxt25/maven-docker-agent:v1'  
-      args '--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${WORKSPACE}:/workspace' // mount Docker socket to access the host's Docker daemon
+      image "hdxt25/maven-docker-agent:v1" 
+      args "--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${WORKSPACE}:/workspace" // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
@@ -20,10 +20,13 @@ pipeline {
         git url: "https://github.com/hdxt25/web-app-1.git", branch: "main", credentialsId: "github-cred"
       }    
     }
-    stage ('check') {
+    stage('check') {
       steps {
-        sh 'ls -al /workspace || ls -al /home/jenkins/agent'
-
+        sh '''
+          echo "Current directory: $(pwd)"
+          echo "Contents of /workspace:"
+          ls -al /workspace
+        '''
       }
     }
     stage("Trivy: Filesystem scan") {
