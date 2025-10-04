@@ -12,7 +12,8 @@ pipeline {
   stages {
     stage('Checkout Code') {
       steps {
-          cleanWs()
+          sh "ls -la ${env.WORKSPACE} || echo 'Workspace is empty'"
+          echo "***********"
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }
     }
