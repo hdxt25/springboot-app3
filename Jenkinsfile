@@ -103,5 +103,11 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      // No Docker cleanup needed since app isn’t run
+      echo "Pipeline finished."
+    }
+  }
 }
     
