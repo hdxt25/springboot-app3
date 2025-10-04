@@ -60,7 +60,7 @@ pipeline {
           # Run ZAP scan against container
           mkdir -p "$WORKSPACE/zap_reports"
           docker run --rm -v "$WORKSPACE/zap_reports:/zap/wrk:rw" --network host \
-              owasp/zap2docker-stable zap-baseline.py \
+              ghcr.io/zaproxy/zaproxy:2.14.0 zap-baseline.py \
               -t http://localhost:8085 \
               -r zap-baseline-report.html \
               -J zap-baseline-report.json -d
