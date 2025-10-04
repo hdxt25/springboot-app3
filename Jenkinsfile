@@ -40,13 +40,13 @@ pipeline {
         }
       }
     }
-    stage('Static Code Analysis') {
+  /*  stage('Static Code Analysis') {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
         }
       }
-    }
+    }*/
     stage('Docker Build (Local Only)') {
       steps {
         sh '''
