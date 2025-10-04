@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image "hdxt25/maven-docker-agent:v1" 
-      args "--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:/workspace" // mount Docker socket to access the host's Docker daemon
+      args "--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:/workspace --workdir /workspace" // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
@@ -10,11 +10,6 @@ pipeline {
         DOCKER_IMAGE = "hdxt25/springboot-app3"
   }
   stages {
-    /*stage("Workspace cleanup") {
-      steps{
-        cleanWs() 
-      }
-    }*/
     stage('Git: Code Checkout') {
       steps {
          git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
