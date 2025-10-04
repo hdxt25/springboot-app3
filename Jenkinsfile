@@ -28,7 +28,7 @@ pipeline {
     stage('SAST: OWASP: Dependency-Check') {
       steps { 
         sh '''
-            curl -Lo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v8.3.1/dependency-check-8.3.1-release.zip
+            curl -Lo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip
             unzip dependency-check.zip
             rm dependency-check.zip
             ./dependency-check/bin/dependency-check.sh --project "springboot-app3" --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report
