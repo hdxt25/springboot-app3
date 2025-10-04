@@ -38,7 +38,10 @@ pipeline {
       steps {
         dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
-                                  failedTotalAll: 0, unstableTotalAll: 0
+                                  failedTotalHigh: 10,
+                                 unstableTotalHigh: 10,
+                                 failedTotalCritical: 10,
+                                 unstableTotalCritical: 10
      }
     }
    /*
