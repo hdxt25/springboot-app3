@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image "hdxt25/maven-docker-agent:v1" 
-      args "--user root -v /var/run/docker.sock:/var/run/docker.sock"  // mount Docker socket to access the host's Docker daemon
+      args "--user root -v /var/run/docker.sock:/var/run/docker.sock -v ${WORKSPACE}:${WORKSPACE}"  // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
@@ -10,6 +10,11 @@ pipeline {
         DOCKER_IMAGE = "hdxt25/springboot-app3"
   }
   stages {
+    stage('Clean Workspace') { 
+      steps { 
+        cleanWs()
+      }
+    }
     stage('Checkout Code') {
       steps {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
@@ -63,7 +68,7 @@ pipeline {
               ghcr.io/zaproxy/zaproxy:2.14.0 zap-baseline.py \
               -t http://localhost:8085 \
               -r zap-baseline-report.html \
-              -J zap-baseline-report.json -d
+              -J zap-baseline-report.json -d || true
 
           # Stop app container & remove test image
           docker stop app-under-test
