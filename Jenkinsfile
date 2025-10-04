@@ -10,13 +10,9 @@ pipeline {
         DOCKER_IMAGE = "hdxt25/springboot-app3"
   }
   stages {
-    stage('Clean Workspace') { 
-      steps { 
-        cleanWs()
-      }
-    }
     stage('Checkout Code') {
       steps {
+          cleanWs()
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }
     }
