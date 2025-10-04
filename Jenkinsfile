@@ -17,7 +17,7 @@ pipeline {
     }
     stage('Git: Code Checkout') {
       steps {
-        git url: "https://github.com/hdxt25/web-app-1.git", branch: "main", credentialsId: "github-cred"
+        git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }    
     }
     stage('check') {
