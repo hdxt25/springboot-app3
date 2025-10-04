@@ -15,15 +15,6 @@ pipeline {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }
     }
-    stage('check') {
-      steps {
-        sh '''
-          echo "Current jenkins directory: $(WORKSPACE)"
-          echo "Contents of /workspace:"
-          ls -al $(WORKSPACE)
-        '''
-      }
-    }
     stage("Trivy: Filesystem scan") {
       steps {
         sh ' trivy fs ${WORKSPACE} '        
@@ -41,19 +32,6 @@ pipeline {
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
-  /*  stage('Dependency-Check') {
-      environment {
-        NVD_API_KEY = credentials('nvd-api-key')  // Jenkins credentials
-      }   
-      steps {
-        sh 'mvn org.owasp:dependency-check-maven:check -Dnvd.apiKey=$NVD_API_KEY'
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: 'target/dependency-check-report.html', fingerprint: true
-        }
-      }
-    }*/
   /*  stage('Static Code Analysis') {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -66,18 +44,21 @@ pipeline {
         sh '''
             docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
             # Build single arch and load locally for scanning
-            docker buildx build --platform linux/amd64 -t $DOCKER_IMAGE:$GIT_COMMIT --load .       
+            docker buildx build --platform linux/amd64 -t $DOCKER_IMAGE:$GIT_COMMIT --load .   
+
+            # Run Trivy scan on the just-built image
+            trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT    
             '''
       }
     }
-    stage('Run Trivy vulnerability scanner') {
+  /*  stage('Run Trivy vulnerability scanner') {
       steps {
         sh '''         
             # Run Trivy scan on the staging Docker image
             trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT           
             '''
       }
-    }
+    }*/
     stage('build & push final docker image') {
       steps {
         withCredentials([usernamePassword(credentialsId:'docker-cred',
