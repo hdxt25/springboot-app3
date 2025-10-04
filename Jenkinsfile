@@ -40,7 +40,7 @@ pipeline {
         sh '''
         chmod +x /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh
         /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh --project "springboot-app3" \
-        --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report --nvd-api-key $NVD_API_KEY
+        --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report --nvdApiKey $NVD_API_KEY
         '''
         dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: '/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
