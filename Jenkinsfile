@@ -104,6 +104,10 @@ pipeline {
                                           usernameVariable: 'GIT_USER', 
                                           passwordVariable: 'GIT_PASS')]) {
                 sh '''
+                    # Ensure permissions
+                    chown -R root:root $WORKSPACE || true
+                    chmod -R u+w $WORKSPACE
+  
                     # Configure Git identity
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
