@@ -46,7 +46,35 @@ pipeline {
 
             # Run Trivy scan on the just-built image
             trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed  $DOCKER_IMAGE:$GIT_COMMIT   || true 
+            docker rmi $DOCKER_IMAGE:$GIT_COMMIT || true
             '''
+      }
+    }
+    stage('DAST - OWASP ZAP') {
+      steps {
+        sh '''
+          # Run your app inside Docker container
+          docker run -d --name app-under-test -p 8085:8080 $DOCKER_IMAGE:$GIT_COMMIT
+          sleep 20
+
+          # Run ZAP scan against container
+          mkdir -p "$WORKSPACE/zap_reports"
+          docker run --rm -v "$WORKSPACE/zap_reports:/zap/wrk:rw" --network host \
+              owasp/zap2docker-stable zap-baseline.py \
+              -t http://localhost:8085 \
+              -r zap-baseline-report.html \
+              -J zap-baseline-report.json -d
+
+          # Stop app container
+          docker stop app-under-test
+          docker rm app-under-test
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'zap_reports/*.html', fingerprint: true
+          archiveArtifacts artifacts: 'zap_reports/*.json', fingerprint: true
+        }
       }
     }
     stage('build & push final multiarch docker image') {
