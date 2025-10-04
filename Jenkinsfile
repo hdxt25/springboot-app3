@@ -80,8 +80,16 @@ pipeline {
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
 
+                    # Copy the deployment file to container temp directory
+                    cp spring-boot-app-manifests/deployment.yml /tmp/deployment.yml
+
+                    # Replace the image tag inside the temp file
+                    sed -i "s/replaceImageTag/$GIT_COMMIT/g" /tmp/deployment.yml
+
+                    # Move the edited file back to the original location
+                    mv /tmp/deployment.yml spring-boot-app-manifests/deployment.yml
                     # Update deployment manifest with Jenkins BUILD_NUMBER
-                    sed -i.bak "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
+                    #  sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
 
                     # Stage and commit changes
                     git add spring-boot-app-manifests/deployment.yml
