@@ -36,6 +36,24 @@ pipeline {
     }
     stage('Dependency-Check') {
       environment {
+        NVD_API_KEY = credentials('nvd-api-key')  // Jenkins secret text
+      }   
+      steps {
+        sh '''
+            echo "Starting Dependency-Check with NVD API key"
+            mvn org.owasp:dependency-check-maven:check \
+                -Dnvd.apiKey=$NVD_API_KEY \
+                -DdataDirectory=$WORKSPACE/dependency-check-data
+        '''
+      }
+      post {
+        always {
+            archiveArtifacts artifacts: 'target/dependency-check-report.html', fingerprint: true
+        }
+      }
+    }
+  /*  stage('Dependency-Check') {
+      environment {
         NVD_API_KEY = credentials('nvd-api-key')  // Jenkins credentials
       }   
       steps {
@@ -46,7 +64,7 @@ pipeline {
           archiveArtifacts artifacts: 'target/dependency-check-report.html', fingerprint: true
         }
       }
-    }
+    }*/
   /*  stage('Static Code Analysis') {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
