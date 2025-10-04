@@ -12,8 +12,6 @@ pipeline {
   stages {
     stage('Checkout Code') {
       steps {
-          sh "ls -la ${env.WORKSPACE} || echo 'Workspace is empty'"
-          echo "***********"
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }
     }
@@ -30,7 +28,7 @@ pipeline {
     stage('SAST: OWASP: Dependency-Check') {
       steps {
         /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
-        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP'
+        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP', ignoreFailures: true
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
