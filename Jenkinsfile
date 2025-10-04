@@ -15,15 +15,15 @@ pipeline {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
       }
     }
-    stage("Trivy: Filesystem scan") {
-      steps {
-        sh ' trivy fs ${WORKSPACE} '        
-      } 
-    }
     stage('Build and Test') {
       steps {
         sh 'mvn clean package'
       }
+    }
+    stage("Trivy: Filesystem scan") {
+      steps {
+        sh ' trivy fs ${WORKSPACE} '        
+      } 
     }
     stage('Dependency-Check') {
       steps {
@@ -39,25 +39,17 @@ pipeline {
         }
       }
     }*/
-    stage('Docker Build (Local Only)') {
+    stage('Trivy: Image scan') {
       steps {
         sh '''
             docker build  -t $DOCKER_IMAGE:$GIT_COMMIT .   
 
             # Run Trivy scan on the just-built image
-            trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT    
+            trivy image --scanners vuln --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT    
             '''
       }
     }
-  /*  stage('Run Trivy vulnerability scanner') {
-      steps {
-        sh '''         
-            # Run Trivy scan on the staging Docker image
-            trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT           
-            '''
-      }
-    }*/
-    stage('build & push final docker image') {
+    stage('build & push final multiarch docker image') {
       steps {
         withCredentials([usernamePassword(credentialsId:'docker-cred',
                                                         usernameVariable: DOCKER_USER,
