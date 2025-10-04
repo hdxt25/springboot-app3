@@ -38,6 +38,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
             sh """
+              echo "Value: \$NVD_API_KEY"
               mvn org.owasp:dependency-check-maven:check -Dnvd.apiKey=$NVD_API_KEY
             """
         }
