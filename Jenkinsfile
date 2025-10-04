@@ -35,8 +35,11 @@ pipeline {
       }
     }
     stage('Dependency-Check') {
+      environment {
+        NVD_API_KEY = credentials('nvd-api-key')  // Jenkins credentials
+      }   
       steps {
-        sh 'mvn org.owasp:dependency-check-maven:check'
+        sh 'mvn org.owasp:dependency-check-maven:check -Dnvd.apiKey=$NVD_API_KEY'
       }
       post {
         always {
