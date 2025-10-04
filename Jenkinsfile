@@ -9,17 +9,17 @@ pipeline {
         SONAR_URL = "http://3.134.76.152:9000"
         DOCKER_IMAGE = "hdxt25/springboot-app3"
   }
-  stages {
+ /* stages {
     stage("Workspace cleanup") {
       steps{
         cleanWs() 
       }
-    }
+    }*/
     stage('Git: Code Checkout') {
       steps {
         dir('/workspace') {
          git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
-        }
+        
       }    
     }
     stage('check') {
