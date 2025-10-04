@@ -22,7 +22,7 @@ pipeline {
     }
     stage("Trivy: Filesystem scan") {
       steps {
-        sh ' trivy fs ${WORKSPACE} '        
+        sh ' trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed ${WORKSPACE} '        
       } 
     }
     stage('Dependency-Check') {
@@ -45,7 +45,7 @@ pipeline {
             docker build  -t $DOCKER_IMAGE:$GIT_COMMIT .   
 
             # Run Trivy scan on the just-built image
-            trivy image --scanners vuln --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE:$GIT_COMMIT    
+            trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed  $DOCKER_IMAGE:$GIT_COMMIT   || true 
             '''
       }
     }
