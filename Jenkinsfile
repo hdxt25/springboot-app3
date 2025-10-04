@@ -39,6 +39,7 @@ pipeline {
         sh '''
             curl -Lo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip
             jar xf dependency-check.zip
+            chmod +x ./dependency-check/bin/dependency-check.sh
             ./dependency-check/bin/dependency-check.sh --project "springboot-app3" --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report
         '''
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
