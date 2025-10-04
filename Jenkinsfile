@@ -36,7 +36,10 @@ pipeline {
     }
     stage('SCA - OWASP Dependency Check') {
       steps {
-        sh 'chmod +x /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh'
+        sh '''
+        chmod +x /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh
+         /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh --project "springboot-app3" --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report
+        '''
         dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: '/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP'
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
                                   failedTotalHigh: 10,
