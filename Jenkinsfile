@@ -10,12 +10,14 @@ pipeline {
         DOCKER_IMAGE = "hdxt25/springboot-app3"
   }
   stages {
-    stage('Check Workspace') {
+    stage('Check and Clean Workspace') {
       steps {
-        sh(script: 'ls -la $WORKSPACE || echo "Workspace empty or inaccessible"')
+        sh '''
+            ls -la $WORKSPACE || echo "Workspace empty or inaccessible"
+            rm -rf $WORKSPACE && ls -la $WORKSPACE
+        '''
       }
     }
-
     stage('Checkout Code') {
       steps {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
@@ -35,7 +37,6 @@ pipeline {
       steps { 
         sh '''
             curl -Lo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip
-            unzip dependency-check.zip
             jar xf dependency-check.zip
             ./dependency-check/bin/dependency-check.sh --project "springboot-app3" --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report
         '''
