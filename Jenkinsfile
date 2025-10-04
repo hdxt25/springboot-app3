@@ -26,9 +26,13 @@ pipeline {
       } 
     }
     stage('SAST: OWASP: Dependency-Check') {
-      steps {
-        /* OWASP Dependency-Check Plugin is installed in Jenkins Plugin first*/
-        dependencyCheck ( additionalArguments: "--scan $WORKSPACE", odcInstallation: 'OWASP', stopBuild: false )
+      steps { 
+        sh '''
+            curl -Lo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v8.3.1/dependency-check-8.3.1-release.zip
+            unzip dependency-check.zip
+            rm dependency-check.zip
+            ./dependency-check/bin/dependency-check.sh --project "springboot-app3" --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report
+        '''
         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
       }
     }   
