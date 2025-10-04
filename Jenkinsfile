@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image "hdxt25/agent:v1" 
+      image "hdxt25/maven-docker-agent:v1" 
       args "--user root -v /var/run/docker.sock:/var/run/docker.sock "  // mount Docker socket to access the host's Docker daemon
     }
   }
@@ -17,6 +17,7 @@ pipeline {
         
         // Clean workspace
         cleanWs()
+        checkout scm
         
         // Optionally list contents after cleanup
         sh 'ls -la $WORKSPACE || echo "Workspace cleaned"'
