@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: springboot-app3
-        image: hdxt25/springboot-app3:replaceImageTag
+        image: hdxt25/springboot-app3:fd321998cc13c67f78b7a165a43dfb87e63b603e
         ports:
         - containerPort: 8080
