@@ -46,7 +46,7 @@ pipeline {
 
             # Run Trivy scan on the just-built image
             trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed  $DOCKER_IMAGE:$GIT_COMMIT   || true 
-            docker rmi $DOCKER_IMAGE:$GIT_COMMIT || true
+            
             '''
       }
     }
@@ -65,9 +65,10 @@ pipeline {
               -r zap-baseline-report.html \
               -J zap-baseline-report.json -d
 
-          # Stop app container
+          # Stop app container & remove test image
           docker stop app-under-test
           docker rm app-under-test
+          docker rmi $DOCKER_IMAGE:$GIT_COMMIT || true
         '''
       }
       post {
