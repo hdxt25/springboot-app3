@@ -42,8 +42,8 @@ pipeline {
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
                     BUILD_NUMBER=${BUILD_NUMBER}
-                    sed "s|hdxt25/web-app:.*|hdxt25/web-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp
-                    mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
+                    sed "s|hdxt25/web-app:.*|hdxt25/web-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
+                    && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
 
                     git add .
                     git commit -m "Update deployment image to version ${BUILD_NUMBER}" || echo "No changes to commit"
