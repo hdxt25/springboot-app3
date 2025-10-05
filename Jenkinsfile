@@ -26,7 +26,7 @@ pipeline {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred" 
       }
     }
-    stage('Update Deployment File') {
+    stage('Update Deployment File demo') {
       environment {
             GIT_REPO_NAME = "springboot-app3"
             GIT_USER_NAME = "hdxt25"
