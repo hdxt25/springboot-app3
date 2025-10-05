@@ -18,16 +18,19 @@ pipeline {
           whoami
           id
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
-          chown -R $(id -u):$(id -g) $WORKSPACE
-          chmod -R u+w $WORKSPACE
-          BUILD_NUMBER=${BUILD_NUMBER}
-          sudo sed -i "s/replaceImageTag/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
+          spring-boot-app-manifests/deployment.yml
         '''
       }
     }
     stage('Checkout Code') {
       steps {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
+          sh '''
+            chown -R $(id -u):$(id -g) $WORKSPACE
+            chmod -R u+w $WORKSPACE
+            BUILD_NUMBER=${BUILD_NUMBER}
+            sudo sed -i "s/replaceImageTag/${BUILD_NUMBER}"
+          ''' 
       }
     }
     stage('Build and Test') {
