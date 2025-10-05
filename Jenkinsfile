@@ -30,16 +30,9 @@ pipeline {
       steps {
           sh '''
               ls -la $WORKSPACE
-            # Copy the deployment file to container temp directory
-              cp spring-boot-app-manifests/deployment.yml /tmp/deployment.yml
-              GIT_COMMIT=${GIT_COMMIT}
-            # Replace the image tag inside the temp file
-              sed -i "s/replaceImageTag/$GIT_COMMIT/g" /tmp/deployment.yml
-
-            # Move the edited file back to the original location
-              mv /tmp/deployment.yml spring-boot-app-manifests/deployment.yml
-            # Update deployment manifest with Jenkins BUILD_NUMBER
-              sed -i "s/replaceImageTag/$GIT_COMMIT/g" spring-boot-app-manifests/deployment.yml
+              BUILD_NUMBER=${BUILD_NUMBER}
+              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" demo.txt
+            
           '''
       }
     }
