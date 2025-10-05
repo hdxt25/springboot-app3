@@ -18,8 +18,9 @@ pipeline {
           whoami
           id
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
-          docker version
-          docker buildx version
+          chown -R $(id -u):$(id -g) $WORKSPACE
+          chmod -R u+w $WORKSPACE
+          sed -i "s/replaceImageTag/1/g" spring-boot-app-manifests/deployment.yml
         '''
       }
     }
