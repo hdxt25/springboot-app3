@@ -34,14 +34,16 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'github-cred', variable: 'GITHUB_TOKEN')]) {
               sh '''
-                
+                    cd $WORKSPACE
+                    # Make sure we have latest code
+                    git fetch origin main
+                    git reset --hard origin/main
+
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
                     BUILD_NUMBER=${BUILD_NUMBER}
-                    sed "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
-                    && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
-
+                    sed -i "s|hdxt25/web-app:.*|hdxt25/web-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
                     git add .
                     git commit -m "Update deployment image to version ${BUILD_NUMBER}" || echo "No changes to commit"
                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
