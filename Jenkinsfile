@@ -30,9 +30,9 @@ pipeline {
     stage ('test') {
       steps {
           sh '''
-
+            ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
             BUILD_NUMBER=${BUILD_NUMBER}
-            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" ./spring-boot-app-manifests/deployment.yml
             echo "sed complete"
             apt-get insta uuu
           '''
