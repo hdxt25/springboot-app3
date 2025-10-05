@@ -26,17 +26,28 @@ pipeline {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred" 
       }
     }
-    stage ('test') {
+    stage('Update Deployment File') {
+      environment {
+            GIT_REPO_NAME = "springboot-app3"
+            GIT_USER_NAME = "hdxt25"
+      }
       steps {
-          sh '''
-              
-              ls -la $WORKSPACE
-              BUILD_NUMBER=${BUILD_NUMBER}
-              sed "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
-              && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+              sh '''
+                
+                    git config user.email "hdxt25@gmail.com"
+                    git config user.name "himanshu"
+                    git config --global --add safe.directory $WORKSPACE
+                    GIT_COMMIT=${GIT_COMMIT}
+                    sed "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
+                    && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
 
-            
-          '''
+                    git add .
+                    git commit -m "Update deployment image to version ${GIT_COMMIT}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+              '''
+          
+        }
       }
     }
     stage('Build and Test') {
@@ -143,7 +154,9 @@ pipeline {
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
                     GIT_COMMIT=${GIT_COMMIT}
-                    sed -i "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml
+                    sed "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
+                    && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
+
                     git add .
                     git commit -m "Update deployment image to version ${GIT_COMMIT}"
                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
