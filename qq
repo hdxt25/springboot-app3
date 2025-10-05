@@ -53,3 +53,12 @@
       }
     }
   }
+
+
+  ----------
+  dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: '/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP'
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
+                                  failedTotalHigh: 10,
+                                 unstableTotalHigh: 10,
+                                 failedTotalCritical: 10,
+                                 unstableTotalCritical: 10

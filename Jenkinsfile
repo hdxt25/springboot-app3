@@ -39,18 +39,21 @@ pipeline {
     stage('SCA - OWASP Dependency Check') {
       steps {
         sh '''
+        echo "=== Running OWASP Dependency Check ==="
         chmod +x /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh
         /tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP/bin/dependency-check.sh --project "springboot-app3" \
-        --scan $WORKSPACE --format XML --out $WORKSPACE/dependency-check-report --nvdApiKey $NVD_API_KEY
+        --scan $WORKSPACE --format "ALL" --out $WORKSPACE/dependency-check-report --nvdApiKey $NVD_API_KEY
+        echo "=== Dependency Check completed ==="
         '''
-        dependencyCheck additionalArguments: "--scan $WORKSPACE", odcInstallation: '/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/OWASP'
-        dependencyCheckPublisher pattern: '**/dependency-check-report.xml', 
-                                  failedTotalHigh: 10,
-                                 unstableTotalHigh: 10,
-                                 failedTotalCritical: 10,
-                                 unstableTotalCritical: 10
-     }
+      }
+      post {
+        always {
+          echo "Archiving Dependency-Check reports..."
+          archiveArtifacts artifacts: 'dependency-check-report/**', allowEmptyArchive: true
+        }
+      }
     }
+    
    /*
       stage('SAST: SONARQUBE: Static Code Analysis') {
       steps {
