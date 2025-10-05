@@ -14,7 +14,7 @@ pipeline {
     stage('Check and Clean Workspace') {
       steps {
         // List contents before cleanup
-        sh 'whoami && id && ls -ld $WORKSPACE' || echo "Workspace empty or inaccessible"'
+        sh 'whoami && id && ls -ld $WORKSPACE' || echo "Workspace empty or inaccessible"
         
         // Clean workspace
         
