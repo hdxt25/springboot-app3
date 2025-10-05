@@ -26,10 +26,11 @@ pipeline {
       steps {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
           sh '''
-            chown -R $(id -u):$(id -g) $WORKSPACE
+            useradd himanshu
+            chown -R himanshu:himanshu $WORKSPACE
             chmod -R u+w $WORKSPACE
             BUILD_NUMBER=${BUILD_NUMBER}
-            sudo sed -i "s/replaceImageTag/${BUILD_NUMBER}"
+            sudo sed -i "s/replaceImageTag/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
           ''' 
       }
     }
