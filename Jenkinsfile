@@ -11,48 +11,11 @@ pipeline {
         NVD_API_KEY = credentials('nvd-api-key')
   }
   stages {
-    stage('Check and Clean Workspace') {
-      steps {
-        sh '''
-          echo "=== Checking workspace status ==="
-          whoami
-          id
-          ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
-        '''
-      }
-    }
     stage('Checkout Code') {
       steps {
           git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred" 
       }
-    }
-    stage('Update Deployment File demo') {
-      environment {
-            GIT_REPO_NAME = "springboot-app3"
-            GIT_USER_NAME = "hdxt25"
-      }
-      steps {
-        withCredentials([string(credentialsId: 'github-cred', variable: 'GITHUB_TOKEN')]) {
-              sh '''
-                    
-
-                    # Make sure we have latest code
-                    
-                    git config user.email "hdxt25@gmail.com"
-                    git config user.name "himanshu"
-                    git config --global --add safe.directory $WORKSPACE
-                    GIT_COMMIT=$(git rev-parse HEAD)
-                    sed "s|hdxt25/springboot-app3:.*|hdxt25/springboot-app3:${GIT_COMMIT}|g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
-                    && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
-
-                    git add .
-                    git commit -m "Update deployment image to version ${GIT_COMMIT}" || echo "No changes to commit"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-              '''
-          
-        }
-      }
-    }
+    }  
     stage('Build and Test') {
       steps {
         sh 'mvn clean package'
@@ -79,8 +42,7 @@ pipeline {
           archiveArtifacts artifacts: 'dependency-check-report/**', allowEmptyArchive: true
         }
       }
-    }
-    
+    }    
    /*
       stage('SAST: SONARQUBE: Static Code Analysis') {
       steps {
@@ -150,21 +112,23 @@ pipeline {
             GIT_USER_NAME = "hdxt25"
       }
       steps {
-        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+        withCredentials([string(credentialsId: 'github-cred', variable: 'GITHUB_TOKEN')]) {
               sh '''
-                
+                    
+
+                    # Make sure we have latest code
+                    
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
-                    GIT_COMMIT=${GIT_COMMIT}
-                    sed "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
+                    GIT_COMMIT=$(git rev-parse HEAD)
+                    sed "s|hdxt25/springboot-app3:.*|hdxt25/springboot-app3:${GIT_COMMIT}|g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
                     && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
 
                     git add .
-                    git commit -m "Update deployment image to version ${GIT_COMMIT}"
+                    git commit -m "Update deployment image to version ${GIT_COMMIT}" || echo "No changes to commit"
                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-              '''
-          
+              ''' 
         }
       }
     }
