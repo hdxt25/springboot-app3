@@ -24,14 +24,18 @@ pipeline {
     }
     stage('Checkout Code') {
       steps {
-          git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred"
+          git url: "https://github.com/hdxt25/springboot-app3.git", branch: "main", credentialsId: "github-cred" 
+      }
+    }
+    stage ('test') {
+      steps {
           sh '''
             useradd himanshu
             chown -R himanshu:himanshu $WORKSPACE
             chmod -R u+w $WORKSPACE
             BUILD_NUMBER=${BUILD_NUMBER}
-            sudo sed -i "s/replaceImageTag/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
-          ''' 
+            sed -i "s/replaceImageTag/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
+          '''
       }
     }
     stage('Build and Test') {
