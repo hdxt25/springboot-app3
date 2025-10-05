@@ -41,7 +41,7 @@ pipeline {
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
-                    GIT_COMMIT=${GIT_COMMIT}
+                    GIT_COMMIT=$(git rev-parse HEAD)
                     sed "s|hdxt25/springboot-app3:.*|hdxt25/springboot-app3:${GIT_COMMIT}|g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
                     && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
 
