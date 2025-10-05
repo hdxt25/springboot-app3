@@ -18,7 +18,6 @@ pipeline {
           whoami
           id
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
-          docker buildx ls | grep multiarch
           docker version
           docker buildx version
         '''
@@ -109,8 +108,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId:'docker-cred',
                                                         usernameVariable: 'DOCKER_USER',
                                          passwordVariable: 'DOCKER_PASS')]) {
-            sh '''
-                            
+            sh '''           
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                 apt-get update
                 docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
