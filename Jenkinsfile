@@ -18,7 +18,7 @@ pipeline {
           whoami
           id
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
-          spring-boot-app-manifests/deployment.yml
+          mount | grep workspace
         '''
       }
     }
