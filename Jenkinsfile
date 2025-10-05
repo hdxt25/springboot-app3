@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'hdxt25/maven-docker-agent:v1'
-      args '--user root -v /var/run/docker.sock:/var/run/docker.sock -v /Users/himanshu/.jenkins/tools:/tools -v /usr/local/bin/docker:/usr/bin/docker'  // mount Docker socket to access the host's Docker daemon
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock -v /Users/himanshu/.jenkins/tools:/tools'  // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
@@ -18,6 +18,9 @@ pipeline {
           whoami
           id
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
+          docker buildx ls | grep multiarch
+          docker version
+          docker buildx version
         '''
       }
     }
@@ -109,6 +112,7 @@ pipeline {
             sh '''
                             
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                apt-get update
                 docker buildx create --name multiarch --platform linux/amd64,linux/arm64 --driver docker-container --bootstrap --use
                 # Build and push multi-arch image
                 docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_IMAGE:$GIT_COMMIT --push .            
