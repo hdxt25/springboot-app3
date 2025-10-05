@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'hdxt25/maven-docker-agent:v1'
-      args '--user $(id -u):$(id -g) -v /var/run/docker.sock:/var/run/docker.sock -v /Users/himanshu/.jenkins/tools:/tools'  // mount Docker socket to access the host's Docker daemon
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock -v /Users/himanshu/.jenkins/tools:/tools'  // mount Docker socket to access the host's Docker daemon
     }
   }
   environment {
