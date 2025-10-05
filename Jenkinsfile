@@ -31,7 +31,7 @@ pipeline {
           sh '''
               ls -la $WORKSPACE
               BUILD_NUMBER=${BUILD_NUMBER}
-              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" demo.txt
+              sed "s/replaceImageTag/${BUILD_NUMBER}/g" demo.txt > demo.txt
             
           '''
       }
