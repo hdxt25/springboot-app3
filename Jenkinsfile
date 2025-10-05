@@ -20,7 +20,8 @@ pipeline {
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
           chown -R $(id -u):$(id -g) $WORKSPACE
           chmod -R u+w $WORKSPACE
-          sed -i "s/replaceImageTag/1/g" spring-boot-app-manifests/deployment.yml
+          BUILD_JOB = ${BUILD_JOB}
+          sudo sed -i "s/replaceImageTag/1/${BUILD_JOB}" spring-boot-app-manifests/deployment.yml
         '''
       }
     }
@@ -132,7 +133,7 @@ pipeline {
                     git config user.email "hdxt25@gmail.com"
                     git config user.name "himanshu"
                     git config --global --add safe.directory $WORKSPACE
-                    BUILD_NUMBER=${GIT_COMMIT}
+                    GIT_COMMIT=${GIT_COMMIT}
                     sed -i "s/replaceImageTag/${GIT_COMMIT}/g" spring-boot-app-manifests/deployment.yml
                     git add .
                     git commit -m "Update deployment image to version ${GIT_COMMIT}"
