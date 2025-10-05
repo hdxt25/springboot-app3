@@ -30,11 +30,11 @@ pipeline {
     stage ('test') {
       steps {
           sh '''
-            useradd himanshu
-            chown -R himanshu:himanshu $WORKSPACE
-            chmod -R u+w $WORKSPACE
+
             BUILD_NUMBER=${BUILD_NUMBER}
-            sed -i "s/replaceImageTag/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
+            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+            echo "sed complete"
+            apt-get insta uuu
           '''
       }
     }
