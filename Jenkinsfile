@@ -35,6 +35,9 @@ pipeline {
         withCredentials([string(credentialsId: 'github-cred', variable: 'GITHUB_TOKEN')]) {
               sh '''
                     cd $WORKSPACE
+                    chown -R $(id -u):$(id -g) spring-boot-app-manifests
+                    chmod -R u+w spring-boot-app-manifests
+
                     # Make sure we have latest code
                     git fetch origin main
                     git reset --hard origin/main
