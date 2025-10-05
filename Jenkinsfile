@@ -13,11 +13,12 @@ pipeline {
   stages {
     stage('Check and Clean Workspace') {
       steps {
-        // List contents before cleanup
-        sh 'whoami && id && ls -ld $WORKSPACE' || echo "Workspace empty or inaccessible"
-        
-        // Clean workspace
-        
+        sh '''
+          echo "=== Checking workspace status ==="
+          whoami
+          id
+          ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
+        '''
       }
     }
     stage('Checkout Code') {
