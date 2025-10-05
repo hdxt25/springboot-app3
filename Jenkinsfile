@@ -29,11 +29,12 @@ pipeline {
     stage ('test') {
       steps {
           sh '''
-              usermod -aG docker jenkins && newgrp docker
-              usermod -aG docker root && newgrp docker
+              
               ls -la $WORKSPACE
               BUILD_NUMBER=${BUILD_NUMBER}
-              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+              sed "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml > spring-boot-app-manifests/deployment.yml.tmp \
+              && mv spring-boot-app-manifests/deployment.yml.tmp spring-boot-app-manifests/deployment.yml
+
             
           '''
       }
