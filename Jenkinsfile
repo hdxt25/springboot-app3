@@ -20,8 +20,8 @@ pipeline {
           ls -ld $WORKSPACE || echo "Workspace empty or inaccessible"
           chown -R $(id -u):$(id -g) $WORKSPACE
           chmod -R u+w $WORKSPACE
-          BUILD_JOB = ${BUILD_JOB}
-          sudo sed -i "s/replaceImageTag/1/${BUILD_JOB}" spring-boot-app-manifests/deployment.yml
+          BUILD_NUMBER = ${BUILD_NUMBER}
+          sudo sed -i "s/replaceImageTag/1/${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
         '''
       }
     }
